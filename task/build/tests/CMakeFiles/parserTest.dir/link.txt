@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/parserTest.dir/parserTest.cpp.o -o parserTest  -lgtest -lgtest_main ../parser/libparser.a ../proto/libproto.a /usr/local/lib/libprotobuf.a 

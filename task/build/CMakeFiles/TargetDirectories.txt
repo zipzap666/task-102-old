@@ -1,0 +1,15 @@
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/CMakeFiles/test.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/proto/CMakeFiles/proto.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/proto/CMakeFiles/test.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/proto/CMakeFiles/edit_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/proto/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/parser/CMakeFiles/parser.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/parser/CMakeFiles/test.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/parser/CMakeFiles/edit_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/parser/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/CMakeFiles/parserTest.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/CMakeFiles/test.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/CMakeFiles/edit_cache.dir
+/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/CMakeFiles/rebuild_cache.dir
