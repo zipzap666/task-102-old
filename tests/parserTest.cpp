@@ -16,18 +16,13 @@ PointerToConstData serializeDelimited(const Message &msg)
     const size_t headerSize = google::protobuf::io::CodedOutputStream::VarintSize32(messageSize);
 
     const PointerToConstData &result = std::make_shared<Data>(headerSize + messageSize);
-    google::protobuf::uint8 *buffer = reinterpret_cast<const google::protobuf::uint8 *>(&*result->begin());
+    uint8_t *buffer = const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(&*result->begin()));
 
     google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(messageSize, buffer);
     msg.SerializeWithCachedSizesToArray(buffer + headerSize);
 
     return result;
 }
-/*
-// empty data
-// wrong size
-// 
-*/
 
 using namespace TestTask::Messages;
 
