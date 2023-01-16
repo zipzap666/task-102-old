@@ -1,5 +1,0 @@
-if(EXISTS "/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/parserTest[1]_tests.cmake")
-  include("/mnt/c/Users/zip/Desktop/server/tasks/task-102/build/tests/parserTest[1]_tests.cmake")
-else()
-  add_test(parserTest_NOT_BUILT parserTest_NOT_BUILT)
-endif()
