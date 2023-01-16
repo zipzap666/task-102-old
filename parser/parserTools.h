@@ -10,16 +10,12 @@
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
 {
-    std::cerr << "parseDelimited" << std::endl;
-
-    std::cerr << size << std::endl;
     if (data == nullptr)
         return nullptr;
     if (size < 1)
         return nullptr;
 
     size_t length = static_cast<const uint8_t*>(data)[0];
-    std::cerr << length << std::endl;
     if ((length + 1 > size) || (length == 0))
     {
         return nullptr;
@@ -28,14 +24,12 @@ std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *b
     std::shared_ptr<Message> message = std::make_shared<Message>();
     if (message->ParseFromArray(data + 1, length))
     {
-        std::cerr << "PARSED" << std::endl;
         if (bytesConsumed != nullptr)
         {
             *bytesConsumed += size;
         }
     }else
     {
-        std::cerr << "DIDN`T PARSED" << std::endl;
         return nullptr;
     }
 

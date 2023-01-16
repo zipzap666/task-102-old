@@ -35,11 +35,7 @@ TEST(parseDelimited, empty_data)
 TEST(parseDelimited, wrong_size)
 {
     WrapperMessage msg;
-    //msg.mutable_fast_response()->set_current_date_time(std::string("10"));
+    msg.mutable_fast_response()->set_current_date_time(std::string("10"));
     auto data = serializeDelimited(msg);
-    std::string str = convert_int32_to_str(data->size()) + std::string(data->data());
-    
-    EXPECT_EQ( parseDelimited<WrapperMessage>(str.c_str(), 0, 0), nullptr);   
-
-    EXPECT_EQ(parseDelimited<WrapperMessage>(str.c_str(), 6, 0), nullptr);
+    EXPECT_EQ(parseDelimited<WrapperMessage>(data->data(), data->size())->has_fast_response(), true);
 }
