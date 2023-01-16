@@ -1,11 +1,10 @@
-#ifndef STREAM_PARSER_HEADER
-#define STREAM_PARSER_HEADER
+#ifndef PARSERTOOLS_H
+#define PARSERTOOLS_H
 
 #include <list>
 #include <vector>
 #include <string>
 #include <memory>
-#include "functions.h"
 
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
@@ -59,6 +58,9 @@ public:
             else
                 break;
         }
+        if(bytesConsumed == 0)
+            return messages;
+
         m_buffer.erase(m_buffer.begin(), m_buffer.begin() + bytesConsumed);
         return messages;
     }
@@ -67,4 +69,4 @@ private:
     std::vector<char> m_buffer;
 };
 
-#endif // STREAM_PARSER_H
+#endif // PARSERTOOLS_H
