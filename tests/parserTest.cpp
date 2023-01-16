@@ -30,6 +30,7 @@ TEST(parseDelimited, empty_data)
 {
     EXPECT_EQ(parseDelimited<WrapperMessage>(nullptr, 10, 0), nullptr);
     EXPECT_EQ(parseDelimited<WrapperMessage>("", 10, 0), nullptr);
+    EXPECT_EQ(parseDelimited<WrapperMessage>(new char*(), 10, 0), nullptr);
 }
 
 TEST(parseDelimited, wrong_size)
@@ -37,5 +38,46 @@ TEST(parseDelimited, wrong_size)
     WrapperMessage msg;
     msg.mutable_fast_response()->set_current_date_time(std::string("10"));
     auto data = serializeDelimited(msg);
-    EXPECT_EQ(parseDelimited<WrapperMessage>(data->data(), data->size())->has_fast_response(), true);
+
+    EXPECT_TRUE(parseDelimited<WrapperMessage>(data->data(), data->size()+2) !=  nullptr);
+    EXPECT_EQ(parseDelimited<WrapperMessage>(data->data(), data->size()-2), nullptr);
+}
+
+TEST(parseDelimited, any_data)
+{
+
+
+    EXPECT_EQ(parseDelimited<WrapperMessage>("123451212324123", 10, 0), nullptr);
+    EXPECT_EQ(parseDelimited<WrapperMessage>("asdasdasdasd", 10, 0), nullptr);
+}
+
+TEST(parseDelimited, corrupted_data)
+{
+    WrapperMessage msg;
+    msg.mutable_fast_response()->set_current_date_time(std::string("10"));
+    auto data = serializeDelimited(msg);
+
+    std::string corrupt_data(data->data());
+
+    corrupt_data[3] = 'k';
+    EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), corrupt_data.size()), nullptr);
+    corrupt_data[4] = 'e';
+    EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), corrupt_data.size()), nullptr);
+    corrupt_data[5] = 'e';
+    EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), corrupt_data.size()), nullptr);
+}
+
+TEST(parseDelimited, bytes_consumed)
+{
+    WrapperMessage msg;
+    msg.mutable_fast_response()->set_current_date_time(std::string("10"));
+    auto data = serializeDelimited(msg);
+
+    size_t bytesConsumed = 0;
+    parseDelimited<WrapperMessage>(data->data(), data->size(), &bytesConsumed);
+    EXPECT_EQ(bytesConsumed, data->size());
+    parseDelimited<WrapperMessage>(data->data(), data->size()-2, &bytesConsumed);
+    EXPECT_EQ(bytesConsumed, data->size());
+    parseDelimited<WrapperMessage>(data->data(), data->size(), &bytesConsumed);
+    EXPECT_EQ(bytesConsumed, data->size() * 2);    
 }

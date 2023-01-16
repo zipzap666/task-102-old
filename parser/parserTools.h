@@ -26,7 +26,7 @@ std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *b
     {
         if (bytesConsumed != nullptr)
         {
-            *bytesConsumed += size;
+            *bytesConsumed += length + 1;
         }
     }else
     {
@@ -43,21 +43,23 @@ public:
     typedef std::shared_ptr<const Message> PointerToConstValue;
     std::list<PointerToConstValue> parse(const std::string &data)
     {
-        for (const char byte : data)
+        for (auto byte : data)
         {
             m_buffer.push_back(byte);
         }
 
         std::list<typename DelimitedMessagesStreamParser<Message>::PointerToConstValue> messages;
         size_t bytesConsumed = 0;
-        std::shared_ptr<Message> message = parseDelimited<Message>(m_buffer.data(), m_buffer.size(), &bytesConsumed);
-        while (message != nullptr)
+        
+        while (bytesConsumed < m_buffer.size())
         {
-            messages.push_back(message);
-            std::vector<char>(m_buffer.begin() + bytesConsumed, m_buffer.end()).swap(m_buffer);
-            bytesConsumed = 0;
-            message = parseDelimited<Message>(m_buffer.data(), m_buffer.size(), &bytesConsumed);
+            std::shared_ptr<Message> message = parseDelimited<Message>(m_buffer.data() + bytesConsumed, m_buffer.size(), &bytesConsumed);
+            if(message != nullptr)
+                messages.push_back(message);
+            else
+                break;
         }
+        m_buffer.erase(m_buffer.begin(), m_buffer.begin() + bytesConsumed);
         return messages;
     }
 
