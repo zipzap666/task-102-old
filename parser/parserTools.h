@@ -7,32 +7,40 @@
 #include <memory>
 #include "functions.h"
 
-
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
 {
-    if(data == nullptr)
+    std::cerr << "parseDelimited" << std::endl;
+
+    std::cerr << size << std::endl;
+    if (data == nullptr)
         return nullptr;
-    if(size < 4)
+    if (size < 1)
         return nullptr;
 
-    std::string buffer((const char *)(data));
-    if(buffer.size() < size)
-        return nullptr;
-
-    size_t length = convert_str_to_int32(buffer.substr(0, 4).c_str());
-    if (length > size - 4)
+    size_t length = static_cast<const uint8_t*>(data)[0];
+    std::cerr << length << std::endl;
+    if ((length + 1 > size) || (length == 0))
     {
         return nullptr;
     }
 
     std::shared_ptr<Message> message = std::make_shared<Message>();
-    message->ParseFromString(buffer.substr(4, 4 + length));
-    *bytesConsumed = 4 + length;
+    if (message->ParseFromArray(data + 1, length))
+    {
+        std::cerr << "PARSED" << std::endl;
+        if (bytesConsumed != nullptr)
+        {
+            *bytesConsumed += size;
+        }
+    }else
+    {
+        std::cerr << "DIDN`T PARSED" << std::endl;
+        return nullptr;
+    }
 
     return message;
 }
-
 
 template <typename Message>
 class DelimitedMessagesStreamParser

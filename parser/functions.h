@@ -14,10 +14,10 @@ inline std::string convert_int32_to_str(uint32_t n)
     for (int i = 3; i >= 0; --i)
     {
         str[i] = static_cast<char>(n & mask);
-        std::cout << int(str[i]) << " ";
+        //std::cout << int(str[i]) << " ";
         n = n >> 8;
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     return std::string(str,4);
 }
 
@@ -28,10 +28,12 @@ inline uint32_t convert_str_to_int32(const char *str)
     {
         num += u_char(str[i]);
         num = num << 8;
-        std:: cout << int(str[i]) << " ";
+        std:: cout << int(u_char(str[i])) << " ";
+        std:: cout << static_cast<uint32_t>(str[i]) << " ";
     }
     num += static_cast<uint32_t>(static_cast<u_char>(str[3]));
     std:: cout << int(str[3]) << std::endl;
+    std:: cout << static_cast<uint32_t>(str[3]) << std::endl;
 
     return num;
 }
