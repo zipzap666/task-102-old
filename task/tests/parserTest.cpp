@@ -99,7 +99,6 @@ TEST(parseDelimited, wrong_size)
 
 TEST(parseDelimited, any_data)
 {
-
     EXPECT_EQ(parseDelimited<WrapperMessage>("123451212324123", 10, 0), nullptr);
     EXPECT_EQ(parseDelimited<WrapperMessage>("asdasdasdasd", 10, 0), nullptr);
 }
@@ -118,6 +117,10 @@ TEST(parseDelimited, corrupted_data)
     EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), corrupt_data.size()), nullptr);
     corrupt_data[5] = 'e';
     EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), corrupt_data.size()), nullptr);
+
+    corrupt_data = std::string(data->data());
+    corrupt_data.erase(corrupt_data.begin() + 1, corrupt_data.end());
+    EXPECT_EQ(parseDelimited<WrapperMessage>(corrupt_data.data(), data->size()), nullptr);
 }
 
 TEST(parseDelimited, bytes_consumed)
@@ -181,7 +184,7 @@ TEST(DelimitedMessagesStreamParser, all_good)
     ++iter;
     EXPECT_TRUE((*iter)->has_request_for_slow_response());
 
-    list_msg = parser.parse(std::string(messages.data(),messages.size()));
+    list_msg = parser.parse(std::string(messages.data(), messages.size()));
     EXPECT_EQ(list_msg.size(), 4);
 }
 
