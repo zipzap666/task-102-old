@@ -5,4 +5,4 @@
 	make
   
 ## run:
-	./tests/parserTest
+	.build/tests/parserTest

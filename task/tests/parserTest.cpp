@@ -80,7 +80,9 @@ TEST(parseDelimited, empty_data)
 {
     EXPECT_EQ(parseDelimited<WrapperMessage>(nullptr, 10, 0), nullptr);
     EXPECT_EQ(parseDelimited<WrapperMessage>("", 10, 0), nullptr);
-    EXPECT_EQ(parseDelimited<WrapperMessage>(new char *(), 10, 0), nullptr);
+    auto buffer = new char[10];
+    EXPECT_EQ(parseDelimited<WrapperMessage>(buffer, 10, 0), nullptr);
+    delete buffer;
 
     WrapperMessage msg;
     auto data = serializeDelimited(msg);
