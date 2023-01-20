@@ -5,23 +5,21 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "../proto/message.pb.h"
 
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
 {
     if (data == nullptr)
         return nullptr;
-    if (size < 1)
-        return nullptr;
 
-    size_t length = static_cast<const uint8_t *>(data)[0];
-    if ((length + 1 > size) || (length == 0))
-    {
+    uint32_t length = 0;
+    google::protobuf::io::CodedInputStream ss(static_cast<const uint8_t *>(data), size);
+    ss.ReadVarint32(&length);
+    if(length > size)
         return nullptr;
-    }
-
     std::shared_ptr<Message> message = std::make_shared<Message>();
-    if (message->ParseFromArray(data + 1, length))
+    if (message->ParseFromCodedStream(&ss))
     {
         if (bytesConsumed != nullptr)
         {
