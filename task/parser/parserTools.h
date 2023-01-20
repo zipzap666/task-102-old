@@ -10,16 +10,18 @@
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
 {
-    if (data == nullptr)
+    if (data == nullptr || size == 0)
         return nullptr;
 
     uint32_t length = 0;
     google::protobuf::io::CodedInputStream ss(static_cast<const uint8_t *>(data), size);
     ss.ReadVarint32(&length);
-    if(length > size)
+
+    if(length + ss.CurrentPosition() > size)
         return nullptr;
+
     std::shared_ptr<Message> message = std::make_shared<Message>();
-    if (message->ParseFromCodedStream(&ss))
+    if (message->ParseFromArray(data + ss.CurrentPosition(), length))
     {
         if (bytesConsumed != nullptr)
         {
