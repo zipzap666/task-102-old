@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "../proto/message.pb.h"
+#include <google/protobuf/io/coded_stream.h>
 
 template <typename Message>
 std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *bytesConsumed = 0)
@@ -14,26 +14,25 @@ std::shared_ptr<Message> parseDelimited(const void *data, size_t size, size_t *b
         return nullptr;
 
     uint32_t length = 0;
-    google::protobuf::io::CodedInputStream ss(static_cast<const uint8_t *>(data), size);
-    ss.ReadVarint32(&length);
+    google::protobuf::io::CodedInputStream stream(static_cast<const uint8_t *>(data), size);
+    stream.ReadVarint32(&length);
 
-    if(length + ss.CurrentPosition() > size)
+    if (length + stream.CurrentPosition() > size || length < 1)
         return nullptr;
+
+    stream.PopLimit(length + stream.CurrentPosition());
+
+    if (bytesConsumed != nullptr)
+    {
+        *bytesConsumed += length + stream.CurrentPosition();
+    }
 
     std::shared_ptr<Message> message = std::make_shared<Message>();
-    if (message->ParseFromArray(data + ss.CurrentPosition(), length))
-    {
-        if (bytesConsumed != nullptr)
-        {
-            *bytesConsumed += length + 1;
-        }
-    }
-    else
-    {
-        return nullptr;
-    }
+    if (message->ParseFromCodedStream(&stream))
+        if(stream.ConsumedEntireMessage())
+            return message;
 
-    return message;
+    return nullptr;
 }
 
 template <typename Message>
@@ -47,15 +46,27 @@ public:
 
         std::list<typename DelimitedMessagesStreamParser<Message>::PointerToConstValue> messages;
         size_t bytesConsumed = 0;
-
-        while (bytesConsumed < m_buffer.size())
+        size_t prev = 0;
+        
+        do 
         {
+            prev = bytesConsumed;
             std::shared_ptr<Message> message = parseDelimited<Message>(m_buffer.data() + bytesConsumed, m_buffer.size(), &bytesConsumed);
             if (message != nullptr)
                 messages.push_back(message);
-            else
+            else if (bytesConsumed == prev)
+            {
                 break;
+            }
+            else if (bytesConsumed == m_buffer.size())
+            {
+                bytesConsumed = prev;
+                break;
+            }
+
         }
+        while(bytesConsumed < m_buffer.size());
+
         if (bytesConsumed == 0)
             return messages;
 
